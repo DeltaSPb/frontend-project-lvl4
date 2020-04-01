@@ -1,0 +1,11 @@
+doctype html
+html.h-100(lang="en")
+  head
+    title= Title
+    //- script(src=assetPath('main.css'))
+    script.
+      var gon = !{JSON.stringify(gon)};
+  body
+    #chat
+      // block content
+    script(src=assetPath('main.js'))
