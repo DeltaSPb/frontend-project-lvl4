@@ -6,11 +6,12 @@ import Channels from './Channels';
 import NewMessageForm from './NewMessageForm';
 import Title from './Title';
 import Messages from './Messages';
+import Modal from './Modal';
 
 const App = () => (
   <Container fluid>
     <Row>
-      <Col className="col-2 vh-100 p-0 bg-primary">
+      <Col className="col-md-3 col-xl-2 p-0 bg-primary">
         <Channels />
       </Col>
       <Col className="vh-100 p-0 m-0">
@@ -18,6 +19,7 @@ const App = () => (
           <Title />
           <Messages />
           <NewMessageForm />
+          <Modal />
         </Card>
       </Col>
     </Row>

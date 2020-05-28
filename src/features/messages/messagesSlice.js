@@ -1,4 +1,3 @@
-// import { keyBy, uniqueId } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 
 const messagesSlice = createSlice({
@@ -10,18 +9,21 @@ const messagesSlice = createSlice({
         messages,
       };
     },
-    addNewMessage(state, { payload }) {
+    addNewMessage(state, { payload: { attributes: newMessage } }) {
       const { messages } = state;
-      const { attributes } = payload;
       return {
-        messages: [...messages, attributes],
-        // messages: [attributes, ...messages],
-
+        messages: [...messages, newMessage],
+      };
+    },
+    removeMessages(state, { payload: { id: removedChannelId } }) {
+      const { messages } = state;
+      return {
+        messages: messages.filter(({ channelId }) => channelId !== removedChannelId),
       };
     },
   },
 });
 
-export const { initMessages, addNewMessage } = messagesSlice.actions;
+export const { initMessages, addNewMessage, removeMessages } = messagesSlice.actions;
 
 export default messagesSlice.reducer;
