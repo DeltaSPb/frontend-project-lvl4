@@ -25,6 +25,7 @@ const NewMessageForm = ({ currentChannalId }) => {
     <Card.Footer>
       <Formik
         initialValues={{ message: '' }}
+        validateOnBlur={false}
         validationSchema={Yup.object().shape({
           message: Yup.string()
             .trim()
@@ -46,7 +47,8 @@ const NewMessageForm = ({ currentChannalId }) => {
           }
         }}
       >
-        {({ errors, isSubmitting }) => {
+        {(props) => {
+          const { errors, isSubmitting } = props;
           const formClass = cn({
             'form-control': true,
             'is-invalid': !!errors.message,

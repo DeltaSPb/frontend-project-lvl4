@@ -38,7 +38,7 @@ const Edit = (props) => {
         .max(16, 'This name is too long!')
         .required('name cannot be an empty string'),
     }),
-    onSubmit: async (values, { setErrors }) => {
+    onSubmit: async (values, { setErrors, setSubmitting }) => {
       const url = routes.channelPath(item.id);
       const attributes = { name: values.channel };
       const editedChannel = { data: { attributes } };
@@ -47,6 +47,7 @@ const Edit = (props) => {
         hideModal();
       } catch (e) {
         setErrors({ channel: e.message });
+        setSubmitting(false);
       }
     },
   });
@@ -75,6 +76,7 @@ const Edit = (props) => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.channel}
+              disabled={formik.isSubmitting}
             />
             {formik.errors.channel ? <div className="d-block invalid-feedback">{formik.errors.channel}</div> : null}
           </FormGroup>
