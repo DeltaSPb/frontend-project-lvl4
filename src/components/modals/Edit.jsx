@@ -80,7 +80,7 @@ const Edit = (props) => {
             />
             {formik.errors.channel ? <div className="d-block invalid-feedback">{formik.errors.channel}</div> : null}
           </FormGroup>
-          <input className="btn btn-primary" type="submit" value="Edit" />
+          <input className="btn btn-primary" type="submit" value="Edit" disabled={formik.isSubmitting} />
         </form>
       </Modal.Body>
     </Modal>
