@@ -1,15 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+import connect from '../connect';
 import { modalInfoSelector } from '../selectors/index';
 import getModal from './modals/index';
 
-const mapStateToProps = (state) => {
-  const modalInfo = modalInfoSelector(state);
-  return modalInfo;
-};
 
-const Modal = (props) => {
-  const { type } = props;
+const Modal = () => {
+  const { type } = useSelector(modalInfoSelector);
 
   if (!type) {
     return null;
@@ -19,4 +16,4 @@ const Modal = (props) => {
   return <Component />;
 };
 
-export default connect(mapStateToProps)(Modal);
+export default connect()(Modal);

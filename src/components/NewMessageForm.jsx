@@ -1,69 +1,69 @@
-import React, { useContext, useRef } from 'react';
-import {
-  Field, Formik, Form, ErrorMessage,
-} from 'formik';
-import { Card } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import React, { useContext, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import { Card, FormGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import cn from 'classnames';
-import * as Yup from 'yup';
+import connect from '../connect';
 import routes from '../routes';
-import { UserContext, getCurrentTime } from '../utils';
+import { UserContext, getCurrentTime, validation } from '../utils';
 import { getCurrentChannalId } from '../selectors/index';
 
-
-const mapStateToProps = (state) => {
-  const currentChannalId = getCurrentChannalId(state);
-  return { currentChannalId };
+const makeSubmit = (props) => async (values, { setSubmitting, setErrors, resetForm }) => {
+  const { currentChannalId, owner } = props;
+  const url = routes.channelMessagesPath(currentChannalId);
+  const attributes = { text: values.message, owner, time: getCurrentTime() };
+  const message = { data: { attributes } };
+  try {
+    await axios.post(url, message);
+    setSubmitting(false);
+    resetForm();
+  } catch (e) {
+    setErrors({ message: e.message });
+    setSubmitting(false);
+  }
 };
 
-const NewMessageForm = ({ currentChannalId }) => {
+const NewMessageForm = () => {
+  const currentChannalId = useSelector(getCurrentChannalId);
   const owner = useContext(UserContext);
   const inputRef = useRef();
 
+  const formik = useFormik({
+    initialValues: { message: '' },
+    validateOnBlur: false,
+    validationSchema: validation.message,
+    onSubmit: makeSubmit({ currentChannalId, owner }),
+  });
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [formik.isSubmitting]);
+
+  const formClass = cn({
+    'is-invalid': !!formik.errors.message,
+  });
+
   return (
     <Card.Footer>
-      <Formik
-        initialValues={{ message: '' }}
-        validateOnBlur={false}
-        validationSchema={Yup.object().shape({
-          message: Yup.string()
-            .trim()
-            .required('cannot send an empty string'),
-        })}
-        onSubmit={async (values, { setSubmitting, setErrors, resetForm }) => {
-          const url = routes.channelMessagesPath(currentChannalId);
-          const attributes = { text: values.message, owner, time: getCurrentTime() };
-          const message = { data: { attributes } };
-          try {
-            await axios.post(url, message);
-            setSubmitting(false);
-            resetForm();
-          } catch (e) {
-            setErrors({ message: e.message });
-            setSubmitting(false);
-          } finally {
-            inputRef.current.focus();
-          }
-        }}
-      >
-        {(props) => {
-          const { errors, isSubmitting } = props;
-          const formClass = cn({
-            'form-control': true,
-            'is-invalid': !!errors.message,
-          });
-
-          return (
-            <Form>
-              <Field innerRef={inputRef} className={formClass} name="message" type="text" placeholder="Type your message here" disabled={isSubmitting} />
-              <ErrorMessage component="div" className="d-block invalid-feedback" name="message" />
-            </Form>
-          );
-        }}
-      </Formik>
+      <form onSubmit={formik.handleSubmit}>
+        <FormGroup>
+          <FormControl
+            className={formClass}
+            ref={inputRef}
+            required
+            name="message"
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.message}
+            disabled={formik.isSubmitting}
+            placeholder="Type your message here"
+          />
+          {formik.errors.message ? <div className="d-block invalid-feedback">{formik.errors.message}</div> : null}
+        </FormGroup>
+      </form>
     </Card.Footer>
   );
 };
 
-export default connect(mapStateToProps)(NewMessageForm);
+export default connect()(NewMessageForm);

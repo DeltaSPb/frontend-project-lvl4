@@ -1,23 +1,32 @@
 import React, { useEffect, useRef } from 'react';
 import { Modal, FormGroup, FormControl } from 'react-bootstrap';
 import { useFormik } from 'formik';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 import axios from 'axios';
 import cn from 'classnames';
-import * as Yup from 'yup';
+import { validation } from '../../utils';
+import connect from '../../connect';
 import routes from '../../routes';
 import { modalInfoSelector } from '../../selectors/index';
-import { hideModalWindow } from '../../features/modalWindow/modalWindowSlice';
 
 
-const mapStateToProps = (state) => {
-  const modalInfo = modalInfoSelector(state);
-  return modalInfo;
+const makeSubmit = ({ hideModalWindow }) => async (values, { setErrors, setSubmitting }) => {
+  const url = routes.channelsPath();
+  const attributes = { name: values.channel };
+  const channel = { data: { attributes } };
+  try {
+    await axios.post(url, channel);
+    hideModalWindow();
+  } catch (e) {
+    setErrors({ channel: e.message });
+    setSubmitting(false);
+  }
 };
 
-const Add = (props) => {
-  const { isOpened, type, dispatch } = props;
+const Create = (props) => {
+  const { hideModalWindow } = props;
+  const { isOpened, type } = useSelector(modalInfoSelector);
   const { t } = useTranslation();
   const inputRef = useRef();
 
@@ -25,38 +34,18 @@ const Add = (props) => {
     inputRef.current.focus();
   }, []);
 
-  const hideModal = () => dispatch(hideModalWindow());
-
   const formik = useFormik({
     initialValues: { channel: '' },
-    validationSchema: Yup.object().shape({
-      channel: Yup.string()
-        .trim()
-        .min(1, 'This name is too short!')
-        .max(16, 'This name is too long!')
-        .required('name cannot be an empty string'),
-    }),
-    onSubmit: async (values, { setErrors, setSubmitting }) => {
-      const url = routes.channelsPath();
-      const attributes = { name: values.channel };
-      const channel = { data: { attributes } };
-      try {
-        await axios.post(url, channel);
-        hideModal();
-      } catch (e) {
-        setErrors({ channel: e.message });
-        setSubmitting(false);
-      }
-    },
+    validationSchema: validation.channel,
+    onSubmit: makeSubmit(props),
   });
 
   const formClass = cn({
-    'form-control': true,
     'is-invalid': !!formik.errors.channel,
   });
 
   return (
-    <Modal show={isOpened} onHide={() => hideModal()}>
+    <Modal show={isOpened} onHide={hideModalWindow}>
       <Modal.Header closeButton>
         <Modal.Title>Create</Modal.Title>
       </Modal.Header>
@@ -85,4 +74,4 @@ const Add = (props) => {
   );
 };
 
-export default connect(mapStateToProps)(Add);
+export default connect()(Create);

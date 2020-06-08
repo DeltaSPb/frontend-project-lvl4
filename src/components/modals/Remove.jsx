@@ -1,40 +1,36 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal, FormGroup } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import axios from 'axios';
+import connect from '../../connect';
 import routes from '../../routes';
 import { modalInfoSelector } from '../../selectors/index';
-import { hideModalWindow } from '../../features/modalWindow/modalWindowSlice';
 
 
-const mapStateToProps = (state) => {
-  const modalInfo = modalInfoSelector(state);
-  return modalInfo;
+const makeSubmit = async ({ id, hideModalWindow, setError }) => {
+  const url = routes.channelPath(id);
+  try {
+    await axios.delete(url);
+    hideModalWindow();
+  } catch (err) {
+    setError(err.message);
+  }
 };
 
 const Remove = (props) => {
-  const {
-    isOpened, type, item, dispatch,
-  } = props;
+  const { hideModalWindow } = props;
+  const { isOpened, type, item } = useSelector(modalInfoSelector);
   const { t } = useTranslation();
   const [error, setError] = useState(null);
 
-  const hideModal = () => dispatch(hideModalWindow());
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const url = routes.channelPath(item.id);
-    try {
-      await axios.delete(url);
-      hideModal();
-    } catch (err) {
-      setError(err.message);
-    }
+    makeSubmit({ id: item.id, hideModalWindow, setError });
   };
 
   return (
-    <Modal show={isOpened} onHide={() => hideModal()}>
+    <Modal show={isOpened} onHide={hideModalWindow}>
       <Modal.Header closeButton>
         <Modal.Title>Remove</Modal.Title>
       </Modal.Header>
@@ -53,4 +49,4 @@ const Remove = (props) => {
   );
 };
 
-export default connect(mapStateToProps)(Remove);
+export default connect()(Remove);

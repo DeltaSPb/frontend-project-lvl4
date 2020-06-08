@@ -1,17 +1,13 @@
 import React, { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { Card } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import connect from '../connect';
 import { UserContext } from '../utils';
 import { messagesSelector } from '../selectors/index';
 
 
-const mapStateToProps = (state) => {
-  const messages = messagesSelector(state);
-  return { messages };
-};
-
-const Messages = (props) => {
-  const { messages } = props;
+const Messages = () => {
+  const messages = useSelector(messagesSelector);
   const currentUser = useContext(UserContext);
 
   return (
@@ -38,4 +34,4 @@ const Messages = (props) => {
   );
 };
 
-export default connect(mapStateToProps)(Messages);
+export default connect()(Messages);

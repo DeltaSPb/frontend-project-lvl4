@@ -20,6 +20,6 @@ const modalWindowSlice = createSlice({
   },
 });
 
-export const { showModalWindow, hideModalWindow } = modalWindowSlice.actions;
+export const { actions } = modalWindowSlice;
 
 export default modalWindowSlice.reducer;
