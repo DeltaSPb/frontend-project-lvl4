@@ -4,7 +4,6 @@ import { useFormik } from 'formik';
 import { Card, FormGroup, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import cn from 'classnames';
-import connect from '../connect';
 import routes from '../routes';
 import { UserContext, getCurrentTime, validation } from '../utils';
 import { getCurrentChannalId } from '../selectors/index';
@@ -66,4 +65,4 @@ const NewMessageForm = () => {
   );
 };
 
-export default connect()(NewMessageForm);
+export default NewMessageForm;

@@ -6,18 +6,17 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import cn from 'classnames';
 import { validation } from '../../utils';
-import connect from '../../connect';
 import routes from '../../routes';
 import { modalInfoSelector } from '../../selectors/index';
 
 
-const makeSubmit = ({ hideModalWindow, id }) => async (values, { setErrors, setSubmitting }) => {
+const makeSubmit = ({ onHide, id }) => async (values, { setErrors, setSubmitting }) => {
   const url = routes.channelPath(id);
   const attributes = { name: values.channel };
   const editedChannel = { data: { attributes } };
   try {
     await axios.patch(url, editedChannel);
-    hideModalWindow();
+    onHide();
   } catch (e) {
     setErrors({ channel: e.message });
     setSubmitting(false);
@@ -25,7 +24,7 @@ const makeSubmit = ({ hideModalWindow, id }) => async (values, { setErrors, setS
 };
 
 const Edit = (props) => {
-  const { hideModalWindow } = props;
+  const { onHide } = props;
   const { isOpened, type, item } = useSelector(modalInfoSelector);
   const { t } = useTranslation();
   const inputRef = useRef();
@@ -37,7 +36,7 @@ const Edit = (props) => {
   const formik = useFormik({
     initialValues: { channel: item.name },
     validationSchema: validation.channel,
-    onSubmit: makeSubmit({ hideModalWindow, id: item.id }),
+    onSubmit: makeSubmit({ onHide, id: item.id }),
   });
 
   const formClass = cn({
@@ -45,7 +44,7 @@ const Edit = (props) => {
   });
 
   return (
-    <Modal show={isOpened} onHide={hideModalWindow}>
+    <Modal show={isOpened} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Edit</Modal.Title>
       </Modal.Header>
@@ -74,4 +73,4 @@ const Edit = (props) => {
   );
 };
 
-export default connect()(Edit);
+export default Edit;

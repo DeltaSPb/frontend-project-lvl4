@@ -1,18 +1,22 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Nav, Button, Row, Col,
 } from 'react-bootstrap';
-import connect from '../connect';
-import { getChannels } from '../selectors/index';
+import { changeChannel } from '../slices/channelsSlice';
+import { showModalWindow } from '../slices/modalWindowSlice';
+import { getChannels, currentChannelSelector } from '../selectors/index';
 
 
-const Channels = (props) => {
-  const { changeChannel, showModalWindow } = props;
+const Channels = () => {
   const channels = useSelector(getChannels);
+  const currentChannal = useSelector(currentChannelSelector);
+  const dispatch = useDispatch();
 
-  const handleChangeChannel = (id) => changeChannel({ id });
-  const showModal = (type, item) => showModalWindow({ type, item });
+  const showModal = (type, item) => dispatch(showModalWindow({ type, item }));
+  const handleChangeChannel = (id) => (
+    currentChannal.id === id ? null : dispatch(changeChannel({ id }))
+  );
 
   const renderChannel = ({ id, name, removable }) => (
     <Nav.Item key={id} className="px-2 py-1">
@@ -45,4 +49,4 @@ const Channels = (props) => {
   );
 };
 
-export default connect()(Channels);
+export default Channels;

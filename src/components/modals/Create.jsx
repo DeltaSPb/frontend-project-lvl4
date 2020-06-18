@@ -6,18 +6,17 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import cn from 'classnames';
 import { validation } from '../../utils';
-import connect from '../../connect';
 import routes from '../../routes';
 import { modalInfoSelector } from '../../selectors/index';
 
 
-const makeSubmit = ({ hideModalWindow }) => async (values, { setErrors, setSubmitting }) => {
+const makeSubmit = ({ onHide }) => async (values, { setErrors, setSubmitting }) => {
   const url = routes.channelsPath();
   const attributes = { name: values.channel };
   const channel = { data: { attributes } };
   try {
     await axios.post(url, channel);
-    hideModalWindow();
+    onHide();
   } catch (e) {
     setErrors({ channel: e.message });
     setSubmitting(false);
@@ -25,7 +24,7 @@ const makeSubmit = ({ hideModalWindow }) => async (values, { setErrors, setSubmi
 };
 
 const Create = (props) => {
-  const { hideModalWindow } = props;
+  const { onHide } = props;
   const { isOpened, type } = useSelector(modalInfoSelector);
   const { t } = useTranslation();
   const inputRef = useRef();
@@ -45,7 +44,7 @@ const Create = (props) => {
   });
 
   return (
-    <Modal show={isOpened} onHide={hideModalWindow}>
+    <Modal show={isOpened} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Create</Modal.Title>
       </Modal.Header>
@@ -74,4 +73,4 @@ const Create = (props) => {
   );
 };
 
-export default connect()(Create);
+export default Create;

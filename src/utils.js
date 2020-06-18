@@ -5,8 +5,8 @@ import * as Yup from 'yup';
 
 export const createUser = () => faker.name.findName();
 
-export const setUserName = () => cookies.set('userName', createUser(), { expires: 1 });
-export const getUserName = () => cookies.get('userName') || (setUserName() && cookies.get('userName'));
+export const setUserName = () => cookies.get('userName') || cookies.set('userName', createUser(), { expires: 1 });
+export const getUserName = () => cookies.get('userName');
 
 export const UserContext = createContext('unknownUser');
 

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { removeChannel } from './channelsSlice';
 
 const messagesSlice = createSlice({
   name: 'massagesInfo',
@@ -15,7 +16,9 @@ const messagesSlice = createSlice({
         messages: [...messages, newMessage],
       };
     },
-    removeMessages(state, { payload: { id: removedChannelId } }) {
+  },
+  extraReducers: {
+    [removeChannel](state, { payload: { id: removedChannelId } }) {
       const { messages } = state;
       return {
         messages: messages.filter(({ channelId }) => channelId !== removedChannelId),
@@ -24,6 +27,6 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { actions } = messagesSlice;
+export const { initMessages, addNewMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

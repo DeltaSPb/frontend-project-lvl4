@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { Card } from 'react-bootstrap';
-import connect from '../connect';
 import { UserContext } from '../utils';
 import { messagesSelector } from '../selectors/index';
 
@@ -34,4 +33,4 @@ const Messages = () => {
   );
 };
 
-export default connect()(Messages);
+export default Messages;

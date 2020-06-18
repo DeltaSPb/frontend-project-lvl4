@@ -3,34 +3,33 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal, FormGroup } from 'react-bootstrap';
 import axios from 'axios';
-import connect from '../../connect';
 import routes from '../../routes';
 import { modalInfoSelector } from '../../selectors/index';
 
 
-const makeSubmit = async ({ id, hideModalWindow, setError }) => {
+const makeSubmit = async ({ id, onHide, setError }) => {
   const url = routes.channelPath(id);
   try {
     await axios.delete(url);
-    hideModalWindow();
+    onHide();
   } catch (err) {
     setError(err.message);
   }
 };
 
 const Remove = (props) => {
-  const { hideModalWindow } = props;
+  const { onHide } = props;
   const { isOpened, type, item } = useSelector(modalInfoSelector);
   const { t } = useTranslation();
   const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    makeSubmit({ id: item.id, hideModalWindow, setError });
+    makeSubmit({ id: item.id, onHide, setError });
   };
 
   return (
-    <Modal show={isOpened} onHide={hideModalWindow}>
+    <Modal show={isOpened} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Remove</Modal.Title>
       </Modal.Header>
@@ -49,4 +48,4 @@ const Remove = (props) => {
   );
 };
 
-export default connect()(Remove);
+export default Remove;
