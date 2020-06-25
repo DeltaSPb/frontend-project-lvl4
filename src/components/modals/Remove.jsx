@@ -35,7 +35,7 @@ const Remove = (props) => {
       </Modal.Header>
       <Modal.Body>
         <p>
-          {t(type)}
+          {t(`modalContent.${type}`)}
         </p>
         <form onSubmit={handleSubmit}>
           <FormGroup>

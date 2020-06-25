@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const defaultChannelId = 1;
+
 const channelsSlice = createSlice({
   name: 'channelsInfo',
-  initialState: { channels: [], currentChannalId: 1 },
+  initialState: { channels: [], currentChannalId: defaultChannelId },
   reducers: {
     initChannels(state, { payload: { channels } }) {
       return {
@@ -27,7 +29,7 @@ const channelsSlice = createSlice({
       const { channels, currentChannalId } = state;
       return {
         channels: channels.filter((channel) => channel.id !== id),
-        currentChannalId: currentChannalId === id ? 1 : currentChannalId,
+        currentChannalId: currentChannalId === id ? defaultChannelId : currentChannalId,
       };
     },
     editChannel(state, { payload: { id, attributes } }) {

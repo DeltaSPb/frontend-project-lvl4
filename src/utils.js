@@ -2,6 +2,7 @@ import { createContext } from 'react';
 import cookies from 'js-cookie';
 import faker from 'faker';
 import * as Yup from 'yup';
+import i18 from './i18n';
 
 export const createUser = () => faker.name.findName();
 
@@ -16,13 +17,13 @@ export const validation = {
   channel: Yup.object().shape({
     channel: Yup.string()
       .trim()
-      .min(1, 'This name is too short!')
-      .max(16, 'This name is too long!')
-      .required('name cannot be an empty string'),
+      .min(1, i18.t('warnings.min'))
+      .max(16, i18.t('warnings.max'))
+      .required(i18.t('warnings.channelRequired')),
   }),
   message: Yup.object().shape({
     message: Yup.string()
       .trim()
-      .required('cannot send an empty string'),
+      .required(i18.t('warnings.messageRequired')),
   }),
 };

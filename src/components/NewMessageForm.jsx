@@ -37,7 +37,7 @@ const NewMessageForm = () => {
 
   useEffect(() => {
     inputRef.current.focus();
-  }, [formik.isSubmitting]);
+  }, [currentChannalId, formik.isSubmitting]);
 
   const formClass = cn({
     'is-invalid': !!formik.errors.message,

@@ -50,7 +50,7 @@ const Edit = (props) => {
       </Modal.Header>
       <Modal.Body>
         <p>
-          {t(type)}
+          {t(`modalContent.${type}`)}
         </p>
         <form onSubmit={formik.handleSubmit}>
           <FormGroup>
